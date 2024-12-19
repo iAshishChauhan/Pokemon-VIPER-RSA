@@ -22,6 +22,10 @@ final class PokemonListPresenter {
         interactor?.handle(action: .initiatePokemonListRequest)
     }
     
+    func handleRedirectionToDetail(data: PokemonData) {
+        interactor?.handle(action: .pokemonTapped(data))
+    }
+    
     private func getViewModel(state: PokemonState) -> PokemonListViewModel {
         return PokemonListViewModel(pokemonData: state.pokemonsList)
     }

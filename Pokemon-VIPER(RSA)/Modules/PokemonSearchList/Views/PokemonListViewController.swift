@@ -66,5 +66,10 @@ extension PokemonListViewController: UITableViewDelegate, UITableViewDataSource 
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let pokemon = viewModel?.pokemonData.results?[indexPath.row] else { return }
+        presentor?.handleRedirectionToDetail(data: pokemon)
+    }
+    
 }
 
