@@ -17,6 +17,9 @@ final class PokemonListViewController: UIViewController {
         tv.dataSource = self
         return tv
     }()
+    
+    var viewModel: PokemonListViewModel?
+    var presentor: PokemonListPresenter?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,14 +55,14 @@ final class PokemonListViewController: UIViewController {
 
 extension PokemonListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return viewModel?.listOfPokemons.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: PokemonListViewTVCell.reuseId, for: indexPath) as? PokemonListViewTVCell else {
             return UITableViewCell()
         }
-        cell.label.text = "Debug Ashish"
+        cell.label.text = viewModel?.listOfPokemons[indexPath.row].name
         cell.selectionStyle = .none
         return cell
     }
