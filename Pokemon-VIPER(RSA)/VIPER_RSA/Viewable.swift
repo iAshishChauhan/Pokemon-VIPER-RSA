@@ -15,11 +15,11 @@ protocol Viewable: AnyObject {
     func dismiss(animated: Bool, _ completion: @escaping (() -> Void))
 }
 
-protocol ViewControlable: Viewable {
+protocol ViewControllable: Viewable {
     var uiViewController: UIViewController { get }
 }
 
-extension ViewControlable where Self: UIViewController {
+extension ViewControllable where Self: UIViewController {
     var uiViewController: UIViewController {
         return self
     }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class PokemonListViewController: UIViewController {
+final class PokemonListViewController: UIViewController, ViewControllable {
     
     private lazy var tableView: UITableView = {
         let tv = UITableView(frame: .zero, style: .grouped)
@@ -25,6 +25,8 @@ final class PokemonListViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         setupTableView()
+        PokemonListRouter.createPokemonListModule(viewRef: self)
+        presentor?.handlePageLoad()
     }
     
     private func setupTableView() {
@@ -38,31 +40,28 @@ final class PokemonListViewController: UIViewController {
         tableView.register(PokemonListViewTVCell.self, forCellReuseIdentifier: PokemonListViewTVCell.reuseId)
     }
     
-    func fetchPokemonList() {
-        guard let url = URL(string: PokemonAPIEndpoint.getPokemonList) else { return }
-        NetworkHandler.shared.fetchData(with: url) { (result: Result<PokemonAPIDataModel?, NetworkError>) in
-            switch result {
-            case .success(let data):
-                print(data)
-            case .failure(let error):
-                print(error)
-            }
+}
+
+extension PokemonListViewController: PokemonListPresenterCallback {
+    func didUpdateUI(viewModel: PokemonListViewModel) {
+        self.viewModel = viewModel
+        if viewModel.pokemonData.results?.isEmpty == false {
+            self.tableView.reloadData()
         }
     }
-
-
+    
 }
 
 extension PokemonListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel?.listOfPokemons.count ?? 0
+        return viewModel?.pokemonData.results?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: PokemonListViewTVCell.reuseId, for: indexPath) as? PokemonListViewTVCell else {
             return UITableViewCell()
         }
-        cell.label.text = viewModel?.listOfPokemons[indexPath.row].name
+        cell.label.text = viewModel?.pokemonData.results?[indexPath.row].name
         cell.selectionStyle = .none
         return cell
     }

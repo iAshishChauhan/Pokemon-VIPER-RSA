@@ -8,9 +8,31 @@
 import Foundation
 
 final class PokemonListViewModel {
-    let listOfPokemons: [PokemonData]
+    let pokemonData: PokemonAPIDataModel
     
-    init(listOfPokemons: [PokemonData]) {
-        self.listOfPokemons = listOfPokemons
+    init(pokemonData: PokemonAPIDataModel) {
+        self.pokemonData = pokemonData
     }
+}
+
+enum PokemonListFlowState {
+    case none
+    case initiateListFetch
+    case initiatedListFetch
+    case successfullListFetch
+    case failedListFetch
+    case initiateNavigationToDetailPage
+}
+
+enum PokemonListAction {
+    case initiatePokemonListRequest
+    case pokemonListFetched(PokemonAPIDataModel)
+    case pokemonTapped(PokemonData)
+}
+
+final class PokemonState {
+    var pokemonsList: PokemonAPIDataModel = PokemonAPIDataModel(count: nil,
+                                                                next: nil,
+                                                                results: nil)
+    var flowstate: PokemonListFlowState = .none
 }
