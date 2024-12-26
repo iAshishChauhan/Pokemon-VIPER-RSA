@@ -9,9 +9,10 @@ import Foundation
 
 enum PokemonListFlowState {
     case none
-    case initiateListFetch
     case initiatedListFetch
     case successfullListFetch
+    case initiatedPaginationListFetch
+    case successfullPaginationListFetch
     case failedListFetch
     case initiateNavigationToDetailPage
 }
@@ -19,6 +20,8 @@ enum PokemonListFlowState {
 enum PokemonListAction {
     case initiatePokemonListRequest
     case pokemonListFetched(PokemonAPIDataModel)
+    case initiatePokemonPaginationFetch
+    case pokemonListPaginationDataFetched(PokemonAPIDataModel)
     case pokemonTapped(PokemonData)
 }
 

@@ -26,6 +26,10 @@ final class PokemonListPresenter {
         interactor?.handle(action: .pokemonTapped(data))
     }
     
+    func handleLoadMore() {
+        interactor?.handle(action: .initiatePokemonPaginationFetch)
+    }
+    
 }
 
 extension PokemonListPresenter: PokemonListInteractorCallback {

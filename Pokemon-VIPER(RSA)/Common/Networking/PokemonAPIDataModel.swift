@@ -10,7 +10,7 @@ import Foundation
 struct PokemonAPIDataModel: Decodable {
     let count: Int?
     let next: String?
-    let results: [PokemonData]?
+    var results: [PokemonData]?
 }
 
 struct PokemonData: Decodable {

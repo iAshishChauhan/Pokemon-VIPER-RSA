@@ -12,15 +12,22 @@ final class PokemonListViewController: UIViewController, ViewControllable {
     private lazy var tableView: UITableView = {
         let tv = UITableView(frame: .zero, style: .grouped)
         tv.translatesAutoresizingMaskIntoConstraints = false
-        tv.separatorStyle = .none
         tv.delegate = self
         tv.dataSource = self
         return tv
     }()
     
-    var datasource: PokemonState?
+    private lazy var footerSpinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 50)
+        spinner.hidesWhenStopped = true
+        return spinner
+    }()
+    
+    private var isLoadingMore: Bool = false
+    private var datasource: PokemonState?
     var presentor: PokemonListPresenter?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
@@ -38,6 +45,7 @@ final class PokemonListViewController: UIViewController, ViewControllable {
             tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)
         ])
         tableView.register(PokemonListViewTVCell.self, forCellReuseIdentifier: PokemonListViewTVCell.reuseId)
+        tableView.tableFooterView = footerSpinner
     }
     
 }
@@ -45,8 +53,15 @@ final class PokemonListViewController: UIViewController, ViewControllable {
 extension PokemonListViewController: PokemonListPresenterCallback {
     func didUpdateUI(datasource: PokemonState) {
         self.datasource = datasource
-        if datasource.pokemonsList.results?.isEmpty == false {
-            self.tableView.reloadData()
+        switch datasource.flowstate {
+        case .successfullListFetch:
+            tableView.reloadData()
+        case .successfullPaginationListFetch:
+            isLoadingMore = false
+            footerSpinner.stopAnimating()
+            tableView.reloadData()
+        default:
+            break
         }
     }
     
@@ -58,10 +73,12 @@ extension PokemonListViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: PokemonListViewTVCell.reuseId, for: indexPath) as? PokemonListViewTVCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: PokemonListViewTVCell.reuseId, for: indexPath) as? PokemonListViewTVCell,
+              let item = datasource?.pokemonsList.results?[indexPath.row] else {
             return UITableViewCell()
         }
-        cell.label.text = datasource?.pokemonsList.results?[indexPath.row].name
+        cell.nameLabel.text = item.name?.capitalized
+        cell.linkLabel.text = item.url
         cell.selectionStyle = .none
         return cell
     }
@@ -69,6 +86,20 @@ extension PokemonListViewController: UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let pokemon = datasource?.pokemonsList.results?[indexPath.row] else { return }
         presentor?.handleRedirectionToDetail(data: pokemon)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let numberOfSections = tableView.numberOfSections
+        let numberOfRowsInLastSection = tableView.numberOfRows(inSection: numberOfSections - 1)
+        
+        guard !isLoadingMore,
+              indexPath.section == numberOfSections - 1,
+              indexPath.row == numberOfRowsInLastSection - 1 else { return }
+        
+        footerSpinner.startAnimating()
+        DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
+            self.presentor?.handleLoadMore()
+        }
     }
     
 }
