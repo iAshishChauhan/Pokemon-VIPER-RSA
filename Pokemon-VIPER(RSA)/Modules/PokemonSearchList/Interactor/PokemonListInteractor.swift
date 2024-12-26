@@ -38,8 +38,12 @@ final class PokemonListInteractor {
         }
     }
     
-    func fetchPokemonList(paginated: Bool = false) {
-        guard let url = URL(string: PokemonAPIEndpoint.getPokemonList) else { return }
+    private func fetchPokemonList(paginated: Bool = false) {
+        guard var url = URL(string: PokemonAPIEndpoint.pokemonListURL) else { return }
+        if paginated, let updatedUrl = updateOffset(in: url, incrementBy: 20) {
+            PokemonAPIEndpoint.pokemonListURL = updatedUrl.absoluteString
+            url = updatedUrl
+        }
         print("Proceeding to make API call now")
         networkHandler.fetchData(with: url) { (result: Result<PokemonAPIDataModel?, NetworkError>) in
             switch result {
@@ -57,4 +61,22 @@ final class PokemonListInteractor {
             }
         }
     }
+    
+    private func updateOffset(in url: URL, incrementBy value: Int) -> URL? {
+        guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              var queryItems = urlComponents.queryItems else { return nil }
+        
+        if let index = queryItems.firstIndex(where: { $0.name == "offset" }),
+           let currentOffset = Int(queryItems[index].value ?? "0") {
+            // Update the offset value
+            queryItems[index].value = "\(currentOffset + value)"
+        } else {
+            // Add "offset" if it doesn't exist
+            queryItems.append(URLQueryItem(name: "offset", value: "\(value)"))
+        }
+        
+        urlComponents.queryItems = queryItems
+        return urlComponents.url
+    }
+
 }
