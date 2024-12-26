@@ -11,12 +11,22 @@ final class PokemonListViewTVCell: UITableViewCell {
 
     static let reuseId = "PokemonListViewTVCell"
     
-    var label: UILabel = {
+    var nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = ""
         label.textColor = .black
-        label.font = UIFont.systemFont(ofSize: 18)
+        label.font = UIFont.systemFont(ofSize: 24)
+        return label
+    }()
+    
+    var linkLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = ""
+        label.textColor = .systemBlue
+        label.font = UIFont.italicSystemFont(ofSize: 18)
+        label.numberOfLines = 0
         return label
     }()
     
@@ -30,12 +40,17 @@ final class PokemonListViewTVCell: UITableViewCell {
     }
     
     private func setupView() {
-        self.addSubview(label)
+        self.addSubview(nameLabel)
+        self.addSubview(linkLabel)
         NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
-            label.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
-            label.topAnchor.constraint(equalTo: self.topAnchor, constant: -16),
-            label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 16)
+            nameLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
+            nameLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
+            nameLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
+            
+            linkLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
+            linkLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
+            linkLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 16),
+            linkLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16)
         ])
     }
     

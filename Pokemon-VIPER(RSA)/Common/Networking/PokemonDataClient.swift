@@ -8,7 +8,7 @@
 import Foundation
 
 enum PokemonAPIEndpoint {
-    static let getPokemonList = "https://pokeapi.co/api/v2/pokemon?limit=10"
+    static let getPokemonList = "https://pokeapi.co/api/v2/pokemon?limit=20"
 }
 
 enum NetworkError: Error {
