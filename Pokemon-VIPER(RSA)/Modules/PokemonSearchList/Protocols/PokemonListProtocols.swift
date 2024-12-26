@@ -12,5 +12,5 @@ protocol PokemonListInteractorCallback: AnyObject {
 }
 
 protocol PokemonListPresenterCallback: AnyObject {
-    func didUpdateUI(viewModel: PokemonListViewModel)
+    func didUpdateUI(datasource: PokemonState)
 }

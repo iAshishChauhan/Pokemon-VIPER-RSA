@@ -7,14 +7,6 @@
 
 import Foundation
 
-final class PokemonListViewModel {
-    let pokemonData: PokemonAPIDataModel
-    
-    init(pokemonData: PokemonAPIDataModel) {
-        self.pokemonData = pokemonData
-    }
-}
-
 enum PokemonListFlowState {
     case none
     case initiateListFetch

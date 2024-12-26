@@ -26,16 +26,12 @@ final class PokemonListPresenter {
         interactor?.handle(action: .pokemonTapped(data))
     }
     
-    private func getViewModel(state: PokemonState) -> PokemonListViewModel {
-        return PokemonListViewModel(pokemonData: state.pokemonsList)
-    }
-    
 }
 
 extension PokemonListPresenter: PokemonListInteractorCallback {
     func didStateChanged(state: PokemonState) {
         self.state = state
-        view?.didUpdateUI(viewModel: getViewModel(state: state))
+        view?.didUpdateUI(datasource: state)
     }
     
 }
